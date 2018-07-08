@@ -9,11 +9,15 @@ public class FranyyControl : MonoBehaviour
     public float TenRotateSpeed = 100;
     public float DeadRot = 5;
     public float ForceByAngular = 1;
-    private List<int> InputList;
+    //private List<int> InputList;
     private GameObject TenPivot;
+    public string Horizontal = "Horizontal";
+    public string Vertical = "Vertical";
+    public string RHorizontal = "RHorizontal";
+    public string RVertical = "RVertical";
     private void Awake()
     {
-        InputList = new List<int>();
+        //InputList = new List<int>();
         TenPivot = transform.Find("TenPivot").gameObject;
     }
     int GetDir(float x, float y)
@@ -27,8 +31,8 @@ public class FranyyControl : MonoBehaviour
     void UpdateDir()
     {
         int Dir = 0;
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        float x = Input.GetAxis(Horizontal);
+        float y = Input.GetAxis(Vertical);
         float tarZ = Mathf.Rad2Deg * Mathf.Atan2(-x, -y);
         //print(tarZ);
         float nowZ = transform.localRotation.eulerAngles.y;
@@ -41,8 +45,8 @@ public class FranyyControl : MonoBehaviour
     int Lastdir = -1;
     void UpdateTen()
     {
-        float x = Input.GetAxis("RHorizontal");
-        float y = Input.GetAxis("RVertical");
+        float x = Input.GetAxis(RHorizontal);
+        float y = Input.GetAxis(RVertical);
         int Rdir = GetDir(x, y);
         /*弱智判圈
         if (Rdir != -1)
@@ -116,5 +120,10 @@ public class FranyyControl : MonoBehaviour
     {
 
         //UpdateVelocity();
+    }
+    public void BeDamage(int deltaHP)
+    {
+        Time.timeScale *= 0.1f;
+        print(gameObject.name + " Lose !!!");
     }
 }
