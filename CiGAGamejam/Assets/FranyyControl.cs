@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class FranyyControl : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class FranyyControl : MonoBehaviour
     public string Vertical = "Vertical";
     public string RHorizontal = "RHorizontal";
     public string RVertical = "RVertical";
+    public GameObject arrow_single;
+    public GameObject ArrowHead;
+    private bool CanBig = false;
+    public int BigNum = 5;
+
     private void Awake()
     {
         //InputList = new List<int>();
@@ -114,16 +120,46 @@ public class FranyyControl : MonoBehaviour
         //print(ZZAngularSpeed);
         if (Mathf.Abs(ZZAngularSpeed) > 10000) return;
         GetComponent<Rigidbody2D>().AddForce(transform.forward * ForceByAngular * ZZAngularSpeed);
-       
+
     }
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Joystick1Button0)) { CanBig = true; Big(); }
         //UpdateVelocity();
     }
     public void BeDamage(int deltaHP)
     {
         Time.timeScale *= 0.1f;
         print(gameObject.name + " Lose !!!");
+    }
+    private bool isBig = false;
+    void Big()
+    {
+        if (isBig) return;
+        if (CanBig) CanBig = false;
+        StartCoroutine(BigProcess());
+
+    }
+    IEnumerator BigProcess()
+    {
+        isBig = true;
+        Stack<GameObject> S = new Stack<GameObject>();
+        ArrowHead.transform.DOLocalMove(ArrowHead.transform.localPosition - new Vector3(1, 0, 1) * BigNum, 0.2f * BigNum);
+        for (int i = 1; i <= BigNum; i++)
+        {
+            var t = Instantiate(arrow_single, arrow_single.transform.parent);
+            t.transform.localPosition = arrow_single.transform.localPosition - new Vector3(1, 0, 1) * i;
+
+            S.Push(t);
+            yield return new WaitForSeconds(0.2f);
+        }
+        ArrowHead.transform.DOLocalMove(ArrowHead.transform.localPosition + new Vector3(1, 0, 1) * BigNum, 0.2f * BigNum);
+        for (int i = 1; i <= BigNum; i++)
+        {
+            Destroy(S.Peek());
+            S.Pop();
+            yield return new WaitForSeconds(0.2f);
+        }
+        isBig = false;
     }
 }
